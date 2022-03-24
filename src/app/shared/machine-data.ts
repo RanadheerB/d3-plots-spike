@@ -1,6 +1,6 @@
 export interface Data{
-    x_value: Number,
-    y_value: Number
+    x_value: number,
+    y_value: number
 }
 
 export const WaveformData: Data[] = [
@@ -1614,7 +1614,7 @@ export const WaveformData: Data[] = [
   },
   {
     "x_value": 3.141,
-    "y_value": 0.031
+    "y_value": 0.031  
   },
   {
     "x_value": 3.148,
