@@ -1,5 +1,8 @@
 <svg class="waveform" width="900" height="500"></svg>
 <div class="readout"></div>
-<button (click)="ToggleEnable()" >Toggle Enable</button>
+
+<button (click)="ClickCursorHarmonicA()" >Toggle Cursor_A Harmonic: {{isHarmonic_A}}</button>
+<br>
+<button (click)="ClickCursorHarmonicB()" >Toggle Cursor_B Harmonic: {{isHarmonic_B}}</button>
 
 <button (click)="ToggleCursor()" >Toggle Cursor</button>
