@@ -1,3 +1,4 @@
 <!-- <app-line-chart></app-line-chart> -->
 <!-- <app-waveform></app-waveform> -->
-<app-event-markers></app-event-markers>
+<app-event-markers (displaySelect)="clickSelect($event)"></app-event-markers>
+<app-select [displaySelect]="displaySelect"></app-select>

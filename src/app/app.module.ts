@@ -6,14 +6,16 @@ import { LineChartComponent } from './line-chart/line-chart.component';
 import { WaveformComponent } from './waveform/waveform.component';
 import { EventMarkersComponent } from './event-markers/event-markers.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select'
+import {MatSelectModule} from '@angular/material/select';
+import { SelectComponent } from './select/select.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     LineChartComponent,
     WaveformComponent,
-    EventMarkersComponent
+    EventMarkersComponent,
+    SelectComponent
   ],
   imports: [
     BrowserModule,

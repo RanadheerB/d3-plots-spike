@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import * as d3Selection from 'd3-selection';
 import * as d3 from 'd3';
 import * as d3Scale from 'd3-scale';
@@ -13,6 +13,8 @@ import { WaveformData } from '../shared/machine-data';
   styleUrls: ['./event-markers.component.scss'],
 })
 export class EventMarkersComponent implements OnInit {
+  @Output() displaySelect = new EventEmitter<boolean>();
+  selectClicked: boolean = false;
   private margin = { top: 20, right: 20, bottom: 30, left: 50 };
   private width: number;
   private height: number;
@@ -49,30 +51,35 @@ export class EventMarkersComponent implements OnInit {
       y_value: 0.05,
       color: 'black',
       direction: 'up',
+      tooltip: 'black-up',
     },
     {
       x_value: 0,
       y_value: 60,
       color: 'red',
       direction: 'up',
+      tooltip: 'red-up',
     },
     {
       x_value: 40,
       y_value: 60,
       color: 'blue',
-      direction: 'down',
+      direction: 'up',
+      tooltip: 'blue-up',
     },
     {
       x_value: 0,
       y_value: 90,
       color: 'green',
       direction: 'down',
+      tooltip: 'green-down',
     },
     {
       x_value: 0,
       y_value: 210,
       color: 'orange',
       direction: 'up',
+      tooltip: 'orange-up',
     },
   ];
   private markers = [
@@ -188,6 +195,26 @@ export class EventMarkersComponent implements OnInit {
       .style('stroke-width', 2)
       .style('stroke', 'blue')
       .style('fill', 'blue');
+    //adding text for each vertical line
+    this.svg
+      .selectAll('.line')
+      .data(this.setpoints)
+      .enter()
+      .append('text')
+      .attr('x', (d: any) => {
+        return d.x_value;
+      })
+      .attr('y', (d: any) => {
+        return d.y_value;
+      })
+      .attr('transform', (d: any) => {
+        return 'translate(' + d.x_value + ',' + this.height + ')rotate()';
+      })
+      .text((d: any) => {
+        return d.text;
+      })
+      .on('click', this.click.bind(this))
+      .style('cursor', 'pointer');
     //draw dashed horizontal lines
     this.svg
       .selectAll('.line')
@@ -198,7 +225,6 @@ export class EventMarkersComponent implements OnInit {
         return d.x_value;
       })
       .attr('y1', (d: any) => {
-        console.log('t--', d);
         return d.y_value;
       })
       .attr('x2', (d: any) => {
@@ -220,7 +246,6 @@ export class EventMarkersComponent implements OnInit {
       .append('path')
       .attr('d', d3.symbol().type(d3Shape.symbolTriangle))
       .attr('transform', (d: any) => {
-        console.log('test', d);
         if (d.direction == 'up')
           return 'translate(' + (d.x_value + 5) + ',' + (d.y_value - 2.5) + ')';
         return (
@@ -234,17 +259,36 @@ export class EventMarkersComponent implements OnInit {
       .attr('width', 10)
       .attr('height', 10)
       .on('mouseover', (d: any) => {
-        // return this.tooltip.style('visibility', 'visible');
         this.tooltip.transition().duration(200).style('opacity', 0.9);
+        let txt;
+        let count = 0;
+
+        for (let i = 1; i < this.setpointsDashed.length; i++) {
+          if (d.target.__data__.y_value == this.setpointsDashed[i].y_value) {
+            if (
+              count == 0 &&
+              d.target.__data__.tooltip !== this.setpointsDashed[i].tooltip
+            )
+              txt =
+                d.target.__data__.tooltip +
+                '<br/>' +
+                this.setpointsDashed[i].tooltip;
+            if (
+              count == 0 &&
+              d.target.__data__.tooltip === this.setpointsDashed[i].tooltip
+            )
+              txt = d.target.__data__.tooltip;
+
+            count++;
+          } else txt = d.target.__data__.tooltip;
+        }
         this.tooltip
-          // .html(d.target.__data__.x_value + '<br/>' + d.target.__data__.y_value)
-          .html('<html><body><h6>hello..</h6></body></html>')
+          .html(txt)
           .style('left', d.pageX + 'px')
           .style('top', d.pageY - 28 + 'px');
       })
       .on('mouseout', () => {
-        this.tooltip.transition().duration(500).style('opacity', 0);
-        // return this.tooltip.style('visibility', 'hidden');
+        // this.tooltip.transition().duration(500).style('opacity', 0);
       })
       .on('click', this.click.bind(this))
       .style('fill', (d: any) => {
@@ -253,7 +297,6 @@ export class EventMarkersComponent implements OnInit {
       .style('cursor', 'pointer');
 
     //draw dashed horizontal lines with ending triangles
-
     this.svg
       .selectAll('.line')
       .data(this.setpointsDashed)
@@ -278,11 +321,30 @@ export class EventMarkersComponent implements OnInit {
       .attr('height', 10)
       .on('mouseover', (d: any) => {
         this.tooltip.transition().duration(200).style('opacity', 0.9);
+        let txt;
+        let count = 0;
+
+        for (let i = 1; i < this.setpointsDashed.length; i++) {
+          if (d.target.__data__.y_value == this.setpointsDashed[i].y_value) {
+            if (
+              count == 0 &&
+              d.target.__data__.tooltip !== this.setpointsDashed[i].tooltip
+            )
+              txt =
+                d.target.__data__.tooltip +
+                '<br/>' +
+                this.setpointsDashed[i].tooltip;
+            if (
+              count == 0 &&
+              d.target.__data__.tooltip === this.setpointsDashed[i].tooltip
+            )
+              txt = d.target.__data__.tooltip;
+
+            count++;
+          }
+        }
         this.tooltip
-          .html('<html><body><h6>hello..</h6></body></html>')
-          // .html('./test.html',(d:any)=>{
-          //   console.log('html',d)
-          // })
+          .html(txt)
           .style('left', d.pageX + 'px')
           .style('top', d.pageY - 28 + 'px');
       })
@@ -323,7 +385,7 @@ export class EventMarkersComponent implements OnInit {
           .style('top', d.pageY - 28 + 'px');
       })
       .on('mouseout', () => {
-        this.tooltip.transition().duration(500).style('opacity', 0);
+        // this.tooltip.transition().duration(500).style('opacity', 0);
       })
       .on('click', this.click.bind(this))
       .on('dblclick', (d: any) => {
@@ -331,11 +393,18 @@ export class EventMarkersComponent implements OnInit {
       })
       .on('contextmenu', (d: any) => {
         d.preventDefault(); //stops rendering default browser options on right click
-        this.tooltip.transition().duration(200).style('opacity', 0.9);
         this.tooltip
-          .html('<div class="dropdown"> <button>Test</button></div>')
+          .html('<button id="button1">Test</button>')
           .style('left', d.pageX + 'px')
-          .style('top', d.pageY - 28 + 'px');
+          .style('top', d.pageY - 28 + 'px')
+          .style('opacity', 1);
+        d3Selection
+          .select('#button1')
+          .on('click', () => {
+            this.selectClicked = true;
+            this.displaySelect.emit(this.selectClicked);
+          })
+          .style('cursor', 'pointer');
       })
       .style('cursor', 'pointer');
   }
