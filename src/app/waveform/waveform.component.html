@@ -1,8 +1,17 @@
-<svg class="waveform" width="900" height="500"></svg>
+<svg class="waveform" width="800" height="400"></svg>
 <div class="readout"></div>
-
-<button (click)="ClickCursorHarmonicA()" >Toggle Cursor_A Harmonic: {{isHarmonic_A}}</button>
 <br>
-<button (click)="ClickCursorHarmonicB()" >Toggle Cursor_B Harmonic: {{isHarmonic_B}}</button>
-
+<br>
+<button (click)="ClickCursorHarmonicA()" >Enable Cursor_A Harmonic</button>
+<br>
+<br>
+<button (click)="ClickCursorHarmonicB()" >Enable Cursor_B Harmonic</button>
+<br>
+<br>
 <button (click)="ToggleCursor()" >Toggle Cursor</button>
+<br>
+<br>
+<button (click)="disableHarmonic_A()" >Disable Cursor_A Harmonic</button>
+<br>
+<br>
+<button (click)="disableHarmonic_B()" >Disable Cursor_B Harmonic</button>
